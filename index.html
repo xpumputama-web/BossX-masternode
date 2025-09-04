@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>BossX Masternode</title>
+  <title>BossX Masternodex</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     body {
@@ -98,13 +98,14 @@
 </head>
 <body>
   <img src="bgcoin.png" alt="BossX Logo">
-  <h1>BossX Masternode</h1>
+  <h1>BossX Masternodex</h1>
 
   <p>Saldo Utama</p>
-  <div class="balance" id="mainBalance">0.000 BossX Token</div>
+  <div class="balance" id="mainBalance">0.000 BOSSX Token</div>
+  <button onclick="withdrawBossX()">💸 WITHDRAW BOSSX</button>
 
-  <p>Saldo Reward </p>
-  <div class="balance" id="rewardBalance">0.000 BossX Token</div>
+  <p>Saldo Reward (sementara)</p>
+  <div class="balance" id="rewardBalance">0.000 BOSSX Token</div>
 
   <button onclick="startMasternode()">🟢 ON</button>
   <button onclick="stopMasternode()">🔴 OFF</button>
@@ -151,17 +152,11 @@
       },
       options: {
         scales: {
-          x: {
-            ticks: { color: 'white' }
-          },
-          y: {
-            ticks: { color: 'white' }
-          }
+          x: { ticks: { color: 'white' } },
+          y: { ticks: { color: 'white' } }
         },
         plugins: {
-          legend: {
-            labels: { color: 'white' }
-          }
+          legend: { labels: { color: 'white' } }
         }
       }
     });
@@ -204,11 +199,24 @@
       document.getElementById("rewardBalance").innerText = rewardBalance.toFixed(3) + " BOSSX Token";
       document.getElementById("timer").innerText = "Auto-CLAIM berhasil!";
 
-      logRewardHistory(claimableReward);
+      logRewardHistory(claimableReward, "✅ Auto-CLAIM");
       updateChart(mainBalance);
     }
 
-    function logRewardHistory(amount) {
+    function withdrawBossX() {
+      const withdrawAmount = 0.050;
+      if (mainBalance >= withdrawAmount) {
+        mainBalance -= withdrawAmount;
+        document.getElementById("mainBalance").innerText = mainBalance.toFixed(3) + " BOSSX Token";
+        document.getElementById("timer").innerText = "Withdraw berhasil: " + withdrawAmount.toFixed(3) + " BOSSX";
+        logRewardHistory(withdrawAmount, "💸 Withdraw");
+        updateChart(mainBalance);
+      } else {
+        document.getElementById("timer").innerText = "Saldo tidak cukup untuk withdraw.";
+      }
+    }
+
+    function logRewardHistory(amount, status) {
       const table = document.getElementById("rewardTable");
       const now = new Date();
       const waktuLengkap = now.toLocaleString("id-ID", {
@@ -223,8 +231,8 @@
 
       const row = table.insertRow(1);
       row.insertCell(0).innerText = waktuLengkap;
-      row.insertCell(1).innerText = amount.toFixed(3) + " BOSSX Token";
-      row.insertCell(2).innerText = "✅ Auto-CLAIM";
+      row.insertCell(1).innerText = (status === "💸 Withdraw" ? "-" : "") + amount.toFixed(3) + " BOSSX Token";
+      row.insertCell(2).innerText = status;
     }
 
     function updateChart(balance) {
