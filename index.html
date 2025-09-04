@@ -53,10 +53,10 @@
   <h1>BossX Masternodex</h1>
 
   <p>Saldo Utama</p>
-  <div class="balance" id="mainBalance">0.000</div>
+  <div class="balance" id="mainBalance">0.000 BOSSX Token</div>
 
   <p>Saldo Reward (sementara)</p>
-  <div class="balance" id="rewardBalance">0.000</div>
+  <div class="balance" id="rewardBalance">0.000 BOSSX Token</div>
 
   <button onclick="startMasternode()">🟢 ON</button>
   <button onclick="stopMasternode()">🔴 OFF</button>
@@ -70,7 +70,6 @@
     let claimableReward = 0;
     const ratePerSecond = 0.001;
     let masternodeInterval;
-    let countdownInterval;
     let secondsPassed = 0;
     let claimReady = false;
 
@@ -84,7 +83,7 @@
 
       masternodeInterval = setInterval(() => {
         rewardBalance += ratePerSecond;
-        document.getElementById("rewardBalance").innerText = rewardBalance.toFixed(3);
+        document.getElementById("rewardBalance").innerText = rewardBalance.toFixed(3) + " BOSSX Token";
 
         secondsPassed++;
         if (secondsPassed <= 60) {
@@ -112,8 +111,8 @@
       claimableReward = 0;
       claimReady = false;
 
-      document.getElementById("mainBalance").innerText = mainBalance.toFixed(3);
-      document.getElementById("rewardBalance").innerText = rewardBalance.toFixed(3);
+      document.getElementById("mainBalance").innerText = mainBalance.toFixed(3) + " BOSSX Token";
+      document.getElementById("rewardBalance").innerText = rewardBalance.toFixed(3) + " BOSSX Token";
       document.getElementById("claimBtn").disabled = true;
       document.getElementById("timer").innerText = "Reward berhasil diklaim!";
     }
