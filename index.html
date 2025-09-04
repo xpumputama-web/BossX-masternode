@@ -2,6 +2,7 @@
 <html>
 <head>
   <title>BossX Masternodex</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -62,7 +63,10 @@
     tr:nth-child(even) {
       background-color: #2a2a3d;
     }
-
+    canvas {
+      margin-top: 40px;
+      max-width: 90%;
+    }
     @media screen and (max-width: 600px) {
       body {
         padding: 20px;
@@ -116,6 +120,9 @@
     </tr>
   </table>
 
+  <h2 style="color:#ff9900;">Grafik Pertumbuhan Saldo</h2>
+  <canvas id="balanceChart"></canvas>
+
   <script>
     let mainBalance = 0;
     let rewardBalance = 0;
@@ -124,6 +131,40 @@
     let masternodeInterval;
     let autoClaimInterval;
     let secondsPassed = 0;
+
+    const chartLabels = [];
+    const chartData = [];
+
+    const ctx = document.getElementById('balanceChart').getContext('2d');
+    const balanceChart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: chartLabels,
+        datasets: [{
+          label: 'Saldo Utama (BOSSX)',
+          data: chartData,
+          borderColor: '#ff9900',
+          backgroundColor: 'rgba(255,153,0,0.2)',
+          fill: true,
+          tension: 0.3
+        }]
+      },
+      options: {
+        scales: {
+          x: {
+            ticks: { color: 'white' }
+          },
+          y: {
+            ticks: { color: 'white' }
+          }
+        },
+        plugins: {
+          legend: {
+            labels: { color: 'white' }
+          }
+        }
+      }
+    });
 
     function startMasternode() {
       if (masternodeInterval) return;
@@ -164,6 +205,7 @@
       document.getElementById("timer").innerText = "Auto-CLAIM berhasil!";
 
       logRewardHistory(claimableReward);
+      updateChart(mainBalance);
     }
 
     function logRewardHistory(amount) {
@@ -183,6 +225,13 @@
       row.insertCell(0).innerText = waktuLengkap;
       row.insertCell(1).innerText = amount.toFixed(3) + " BOSSX Token";
       row.insertCell(2).innerText = "✅ Auto-CLAIM";
+    }
+
+    function updateChart(balance) {
+      const now = new Date().toLocaleTimeString("id-ID");
+      chartLabels.push(now);
+      chartData.push(balance.toFixed(3));
+      balanceChart.update();
     }
   </script>
 </body>
