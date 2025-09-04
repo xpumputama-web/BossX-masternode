@@ -67,30 +67,33 @@
   <script>
     let mainBalance = 0;
     let rewardBalance = 0;
+    let claimableReward = 0;
     const ratePerSecond = 0.001;
     let masternodeInterval;
     let countdownInterval;
-    let remainingSeconds = 0;
+    let secondsPassed = 0;
     let claimReady = false;
 
     function startMasternode() {
       if (masternodeInterval) return;
 
-      remainingSeconds = 60; // 1 menit
-      updateTimerDisplay();
+      secondsPassed = 0;
+      claimableReward = 0;
+      document.getElementById("claimBtn").disabled = true;
+      document.getElementById("timer").innerText = "Masternode berjalan...";
 
       masternodeInterval = setInterval(() => {
         rewardBalance += ratePerSecond;
         document.getElementById("rewardBalance").innerText = rewardBalance.toFixed(3);
-      }, 1000);
 
-      countdownInterval = setInterval(() => {
-        remainingSeconds--;
-        updateTimerDisplay();
-        if (remainingSeconds <= 0) {
-          clearInterval(countdownInterval);
-          document.getElementById("claimBtn").disabled = false;
+        secondsPassed++;
+        if (secondsPassed <= 60) {
+          claimableReward += ratePerSecond;
+        }
+
+        if (secondsPassed === 60) {
           claimReady = true;
+          document.getElementById("claimBtn").disabled = false;
           document.getElementById("timer").innerText = "Siap diklaim!";
         }
       }, 1000);
@@ -98,27 +101,21 @@
 
     function stopMasternode() {
       clearInterval(masternodeInterval);
-      clearInterval(countdownInterval);
       masternodeInterval = null;
       document.getElementById("timer").innerText = "Masternode berhenti";
     }
 
     function claimReward() {
       if (!claimReady) return;
-      mainBalance += rewardBalance;
-      rewardBalance = 0;
+      mainBalance += claimableReward;
+      rewardBalance -= claimableReward;
+      claimableReward = 0;
       claimReady = false;
+
       document.getElementById("mainBalance").innerText = mainBalance.toFixed(3);
       document.getElementById("rewardBalance").innerText = rewardBalance.toFixed(3);
       document.getElementById("claimBtn").disabled = true;
       document.getElementById("timer").innerText = "Reward berhasil diklaim!";
-    }
-
-    function updateTimerDisplay() {
-      const minutes = Math.floor(remainingSeconds / 60);
-      const seconds = remainingSeconds % 60;
-      document.getElementById("timer").innerText =
-        "Sisa waktu masternode: " + minutes + "m " + seconds + "d";
     }
   </script>
 </body>
