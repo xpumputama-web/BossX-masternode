@@ -46,6 +46,22 @@
       margin-top: 20px;
       color: #00ffcc;
     }
+    table {
+      width: 90%;
+      margin: 40px auto;
+      border-collapse: collapse;
+      color: white;
+    }
+    th, td {
+      padding: 10px;
+      border: 1px solid #555;
+    }
+    th {
+      background-color: #333;
+    }
+    tr:nth-child(even) {
+      background-color: #2a2a3d;
+    }
   </style>
 </head>
 <body>
@@ -63,6 +79,15 @@
   <button onclick="claimReward()" id="claimBtn" disabled>💰 CLAIM</button>
 
   <div class="timer" id="timer">Masternode belum dimulai</div>
+
+  <h2 style="color:#ff9900;">Histori Reward Masternode</h2>
+  <table id="rewardTable">
+    <tr>
+      <th>Waktu</th>
+      <th>Jumlah</th>
+      <th>Status</th>
+    </tr>
+  </table>
 
   <script>
     let mainBalance = 0;
@@ -108,13 +133,34 @@
       if (!claimReady) return;
       mainBalance += claimableReward;
       rewardBalance -= claimableReward;
-      claimableReward = 0;
-      claimReady = false;
 
       document.getElementById("mainBalance").innerText = mainBalance.toFixed(3) + " BOSSX Token";
       document.getElementById("rewardBalance").innerText = rewardBalance.toFixed(3) + " BOSSX Token";
       document.getElementById("claimBtn").disabled = true;
       document.getElementById("timer").innerText = "Reward berhasil diklaim!";
+
+      logRewardHistory(claimableReward);
+      claimableReward = 0;
+      claimReady = false;
+    }
+
+    function logRewardHistory(amount) {
+      const table = document.getElementById("rewardTable");
+      const now = new Date();
+      const waktuLengkap = now.toLocaleString("id-ID", {
+        weekday: "long",
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit"
+      });
+
+      const row = table.insertRow(1); // Tambah di atas
+      row.insertCell(0).innerText = waktuLengkap;
+      row.insertCell(1).innerText = amount.toFixed(3) + " BOSSX Token";
+      row.insertCell(2).innerText = "✅ Sukses";
     }
   </script>
 </body>
