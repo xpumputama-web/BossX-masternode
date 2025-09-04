@@ -22,23 +22,54 @@
       height: 150px;
       margin-bottom: 20px;
     }
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      margin-top: 30px;
+      background-color: #ff9900;
+      border: none;
+      color: white;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #e68a00;
+    }
   </style>
 </head>
 <body>
-  <img src="bossx-logo.png" alt="BossX Logo">
+  <img src="bgcoin.png" alt="BossX Logo">
   <h1>BossX Masternodex</h1>
   <p>Stake unit</p>
   <div class="balance" id="balance">0.000</div>
 
+  <button onclick="startMining()">ON</button>
+  <button onclick="stopMining()">OFF</button>
+
   <script>
     let balance = 0;
     const ratePerSecond = 0.001;
+    let miningInterval;
+    let miningTimeout;
 
-    setInterval(() => {
-      balance += ratePerSecond;
-      document.getElementById("balance").innerText = balance.toFixed(3);
-    }, 1000);
+    function startMining() {
+      if (miningInterval) return; // Jangan mulai lagi kalau sudah jalan
+
+      miningInterval = setInterval(() => {
+        balance += ratePerSecond;
+        document.getElementById("balance").innerText = balance.toFixed(3);
+      }, 1000);
+
+      miningTimeout = setTimeout(() => {
+        stopMining();
+        alert("Mining selesai otomatis setelah 10 menit.");
+      }, 600000); // 10 menit = 600.000 ms
+    }
+
+    function stopMining() {
+      clearInterval(miningInterval);
+      clearTimeout(miningTimeout);
+      miningInterval = null;
+    }
   </script>
 </body>
 </html>
-
