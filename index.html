@@ -62,6 +62,35 @@
     tr:nth-child(even) {
       background-color: #2a2a3d;
     }
+
+    /* Mobile-friendly layout */
+    @media screen and (max-width: 600px) {
+      body {
+        padding: 20px;
+      }
+      h1 {
+        font-size: 28px;
+      }
+      .balance {
+        font-size: 24px;
+      }
+      button {
+        width: 100%;
+        margin: 8px 0;
+        font-size: 18px;
+      }
+      table {
+        font-size: 14px;
+        width: 100%;
+      }
+      th, td {
+        padding: 6px;
+      }
+      img {
+        width: 100px;
+        height: 100px;
+      }
+    }
   </style>
 </head>
 <body>
@@ -157,7 +186,7 @@
         second: "2-digit"
       });
 
-      const row = table.insertRow(1); // Tambah di atas
+      const row = table.insertRow(1);
       row.insertCell(0).innerText = waktuLengkap;
       row.insertCell(1).innerText = amount.toFixed(3) + " BOSSX Token";
       row.insertCell(2).innerText = "✅ Sukses";
