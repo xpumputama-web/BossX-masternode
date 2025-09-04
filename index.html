@@ -63,7 +63,6 @@
       background-color: #2a2a3d;
     }
 
-    /* Mobile-friendly layout */
     @media screen and (max-width: 600px) {
       body {
         padding: 20px;
@@ -98,14 +97,13 @@
   <h1>BossX Masternodex</h1>
 
   <p>Saldo Utama</p>
-  <div class="balance" id="mainBalance">0.000 BossX Token</div>
+  <div class="balance" id="mainBalance">0.000 BOSSX Token</div>
 
-  <p>Saldo Reward </p>
-  <div class="balance" id="rewardBalance">0.000 BossX Token</div>
+  <p>Saldo Reward (sementara)</p>
+  <div class="balance" id="rewardBalance">0.000 BOSSX Token</div>
 
   <button onclick="startMasternode()">🟢 ON</button>
   <button onclick="stopMasternode()">🔴 OFF</button>
-  <button onclick="claimReward()" id="claimBtn" disabled>💰 CLAIM</button>
 
   <div class="timer" id="timer">Masternode belum dimulai</div>
 
@@ -124,53 +122,48 @@
     let claimableReward = 0;
     const ratePerSecond = 0.001;
     let masternodeInterval;
+    let autoClaimInterval;
     let secondsPassed = 0;
-    let claimReady = false;
 
     function startMasternode() {
       if (masternodeInterval) return;
 
       secondsPassed = 0;
       claimableReward = 0;
-      document.getElementById("claimBtn").disabled = true;
       document.getElementById("timer").innerText = "Masternode berjalan...";
 
       masternodeInterval = setInterval(() => {
         rewardBalance += ratePerSecond;
-        document.getElementById("rewardBalance").innerText = rewardBalance.toFixed(3) + " BOSSX Token";
-
+        claimableReward += ratePerSecond;
         secondsPassed++;
-        if (secondsPassed <= 60) {
-          claimableReward += ratePerSecond;
-        }
+        document.getElementById("rewardBalance").innerText = rewardBalance.toFixed(3) + " BOSSX Token";
+      }, 1000);
 
-        if (secondsPassed === 60) {
-          claimReady = true;
-          document.getElementById("claimBtn").disabled = false;
-          document.getElementById("timer").innerText = "Siap diklaim!";
+      autoClaimInterval = setInterval(() => {
+        if (secondsPassed >= 60) {
+          autoClaimReward();
+          secondsPassed = 0;
+          claimableReward = 0;
         }
       }, 1000);
     }
 
     function stopMasternode() {
       clearInterval(masternodeInterval);
+      clearInterval(autoClaimInterval);
       masternodeInterval = null;
       document.getElementById("timer").innerText = "Masternode berhenti";
     }
 
-    function claimReward() {
-      if (!claimReady) return;
+    function autoClaimReward() {
       mainBalance += claimableReward;
       rewardBalance -= claimableReward;
 
       document.getElementById("mainBalance").innerText = mainBalance.toFixed(3) + " BOSSX Token";
       document.getElementById("rewardBalance").innerText = rewardBalance.toFixed(3) + " BOSSX Token";
-      document.getElementById("claimBtn").disabled = true;
-      document.getElementById("timer").innerText = "Reward berhasil diklaim!";
+      document.getElementById("timer").innerText = "Auto-CLAIM berhasil!";
 
       logRewardHistory(claimableReward);
-      claimableReward = 0;
-      claimReady = false;
     }
 
     function logRewardHistory(amount) {
@@ -189,7 +182,7 @@
       const row = table.insertRow(1);
       row.insertCell(0).innerText = waktuLengkap;
       row.insertCell(1).innerText = amount.toFixed(3) + " BOSSX Token";
-      row.insertCell(2).innerText = "✅ Sukses";
+      row.insertCell(2).innerText = "✅ Auto-CLAIM";
     }
   </script>
 </body>
