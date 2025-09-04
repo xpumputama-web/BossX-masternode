@@ -25,7 +25,7 @@
     button {
       padding: 10px 20px;
       font-size: 16px;
-      margin-top: 30px;
+      margin: 10px;
       background-color: #ff9900;
       border: none;
       color: white;
@@ -33,6 +33,11 @@
     }
     button:hover {
       background-color: #e68a00;
+    }
+    .timer {
+      font-size: 20px;
+      margin-top: 20px;
+      color: #00ffcc;
     }
   </style>
 </head>
@@ -45,30 +50,50 @@
   <button onclick="startMining()">ON</button>
   <button onclick="stopMining()">OFF</button>
 
+  <div class="timer" id="timer">Mining belum dimulai</div>
+
   <script>
     let balance = 0;
     const ratePerSecond = 0.001;
     let miningInterval;
     let miningTimeout;
+    let countdownInterval;
+    let remainingSeconds = 0;
 
     function startMining() {
-      if (miningInterval) return; // Jangan mulai lagi kalau sudah jalan
+      if (miningInterval) return;
+
+      remainingSeconds = 600; // 10 menit
+      updateTimerDisplay();
 
       miningInterval = setInterval(() => {
         balance += ratePerSecond;
         document.getElementById("balance").innerText = balance.toFixed(3);
       }, 1000);
 
-      miningTimeout = setTimeout(() => {
-        stopMining();
-        alert("Mining selesai otomatis setelah 10 menit.");
-      }, 600000); // 10 menit = 600.000 ms
+      countdownInterval = setInterval(() => {
+        remainingSeconds--;
+        updateTimerDisplay();
+        if (remainingSeconds <= 0) {
+          stopMining();
+          alert("Mining selesai otomatis setelah 10 menit.");
+        }
+      }, 1000);
     }
 
     function stopMining() {
       clearInterval(miningInterval);
+      clearInterval(countdownInterval);
       clearTimeout(miningTimeout);
       miningInterval = null;
+      document.getElementById("timer").innerText = "Mining berhenti";
+    }
+
+    function updateTimerDisplay() {
+      const minutes = Math.floor(remainingSeconds / 60);
+      const seconds = remainingSeconds % 60;
+      document.getElementById("timer").innerText =
+        "Sisa waktu mining: " + minutes + "m " + seconds + "d";
     }
   </script>
 </body>
